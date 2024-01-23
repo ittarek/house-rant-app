@@ -14,11 +14,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import AllHouse from "./AllHouse";
-
+import CreateNewFolderRoundedIcon from "@mui/icons-material/CreateNewFolderRounded";
+import AddHouseModal from "./AddHouseModal";
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Owner = () => {
+      const [open, setOpen] = React.useState(false);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -89,11 +91,17 @@ const Owner = () => {
                   display: { xs: "block", md: "none" },
                 }}
               >
-                {pages.map(page => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
-                ))}
+                <MenuItem  onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    {" "}
+                    <Button
+                      sx={{ my: 2, display: "block" }}
+                      onClick={() => setOpen(!open)}
+                    >
+                      <CreateNewFolderRoundedIcon /> Add New House
+                    </Button>
+                  </Typography>
+                </MenuItem>
               </Menu>
             </Box>
             <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -116,9 +124,12 @@ const Owner = () => {
               LOGO
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            
-              <Button sx={{ my: 2, color: "white", display: "block" }}>
-                Add New House
+              <AddHouseModal open={open} setOpen={setOpen} />
+              <Button
+                sx={{ my: 2, color: "white", display: "block" }}
+                onClick={() => setOpen(!open)}
+              >
+                <CreateNewFolderRoundedIcon /> Add New House
               </Button>
             </Box>
 
@@ -155,7 +166,9 @@ const Owner = () => {
         </Container>
       </AppBar>
 
-      <section><AllHouse /></section>
+      <section>
+        <AllHouse />
+      </section>
     </div>
   );
 };

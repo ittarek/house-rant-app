@@ -15,7 +15,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import AddHouseModal from "./AddHouseModal";
+import { TableContainer } from "@mui/material";
+import Paper from "@mui/material/Paper";
 
 function createData(
   name,
@@ -146,10 +149,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
+
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -229,15 +229,21 @@ const headCells = [
     disablePadding: false,
     label: "Description",
   },
+  {
+    id: " delete",
+   
+    label: "Delete",
+  },
+  {
+    id: "edit",
+
+    label: "Edit",
+  },
 ];
 
 function EnhancedTableHead(props) {
   const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
+
     onRequestSort,
   } = props;
   const createSortHandler = property => event => {
@@ -255,6 +261,7 @@ function EnhancedTableHead(props) {
               key={headCell.id}
           
             >
+        
               <Link underline="none" color="neutral" fontWeight="lg">
                 {headCell.label}
               </Link>
@@ -275,57 +282,9 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        py: 1,
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: "background.level1",
-        }),
-        borderTopLeftRadius: "var(--unstable_actionRadius)",
-        borderTopRightRadius: "var(--unstable_actionRadius)",
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography sx={{ flex: "1 1 100%" }} component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          level="body-lg"
-          sx={{ flex: "1 1 100%" }}
-          id="tableTitle"
-          component="div"
-        >
-          All House
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton size="sm" color="danger" variant="solid">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton size="sm" variant="outlined" color="neutral">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Box>
-  );
-}
 
 export default function AllHouse() {
+          const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -348,95 +307,139 @@ export default function AllHouse() {
   };
 
   return (
-    <Sheet
-      variant="outlined"
-      sx={{ width: "100%", boxShadow: "sm", borderRadius: "sm" }}
-    >
-      <EnhancedTableToolbar />
-      <Table aria-labelledby="tableTitle" hoverRow>
-        <EnhancedTableHead rowCount={rows.length} />
-        <tbody className="w-full">
-          {stableSort(rows, getComparator())
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => {
-              return (
-                <tr className="w-full" key={index}>
-                  <td>{row.name}</td>
-                  <td>{row.address}</td>
-                  <td>{row.city}</td>
-                  <td>{row.bedrooms}</td>
-                  <td>{row.bathrooms}</td>
-                  <td>{row.roomSize}</td>
-                  <td><img src={row.picture} alt="Home" /></td>
-                  <td>{row.availabilityDate}</td>
-                  <td>{row.rentPerMonth}</td>
-                  <td>{row.phoneNumber}</td>
-                  <td>{row.description}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-        {/* for pagination */}
-        <tfoot>
-          <tr>
-            <td colSpan={6}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  justifyContent: "flex-end",
-                }}
-              >
-                <FormControl orientation="horizontal" size="sm">
-                  <FormLabel>Rows per page:</FormLabel>
-                  <Select
-                    onChange={handleChangeRowsPerPage}
-                    value={rowsPerPage}
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
+        <TableContainer >
+          {" "}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              py: 1,
+              pl: { sm: 2 },
+            }}
+          >
+            <Typography
+              level="body-lg"
+              sx={{ flex: "1 1 100%" }}
+              id="tableTitle"
+              component="div"
+            >
+              All House
+            </Typography>
+            <FilterListIcon />
+          </Box>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            // size={dense ? "small" : "medium"}
+          >
+            <EnhancedTableHead rowCount={rows.length} />
+            <tbody className="w-full">
+              {stableSort(rows, getComparator())
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  return (
+                    <tr className="w-full" key={index}>
+                      <td>{row.name}</td>
+                      <td>{row.address}</td>
+                      <td>{row.city}</td>
+                      <td>{row.bedrooms}</td>
+                      <td>{row.bathrooms}</td>
+                      <td>{row.roomSize}</td>
+                      <td>
+                        <img src={row.picture} alt="Home" />
+                      </td>
+                      <td>{row.availabilityDate}</td>
+                      <td>{row.rentPerMonth}</td>
+                      <td>{row.phoneNumber}</td>
+                      <td>{row.description}</td>
+                      <td>
+                        {" "}
+                        <IconButton size="sm" color="danger" variant="solid">
+                          <DeleteIcon />
+                        </IconButton>
+                      </td>
+                      <td>
+                        {" "}
+                        <AddHouseModal open={open} setOpen={setOpen} />
+                        <IconButton
+                          size="sm"
+                          color="success"
+                          variant="solid"
+                          onClick={() => setOpen(!open)}
+                        >
+                          <AppRegistrationIcon />
+                        </IconButton>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+            {/* for pagination */}
+            <tfoot>
+              <tr>
+                <td colSpan={6}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      justifyContent: "flex-end",
+                    }}
                   >
-                    <Option value={5}>5</Option>
-                    <Option value={10}>10</Option>
-                    <Option value={25}>25</Option>
-                  </Select>
-                </FormControl>
-                <Typography textAlign="center" sx={{ minWidth: 80 }}>
-                  {labelDisplayedRows({
-                    from: rows.length === 0 ? 0 : page * rowsPerPage + 1,
-                    to: getLabelDisplayedRowsTo(),
-                    count: rows.length === -1 ? -1 : rows.length,
-                  })}
-                </Typography>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <IconButton
-                    size="sm"
-                    color="neutral"
-                    variant="outlined"
-                    disabled={page === 0}
-                    onClick={() => handleChangePage(page - 1)}
-                    sx={{ bgcolor: "background.surface" }}
-                  >
-                    <KeyboardArrowLeftIcon />
-                  </IconButton>
-                  <IconButton
-                    size="sm"
-                    color="neutral"
-                    variant="outlined"
-                    disabled={
-                      rows.length !== -1
-                        ? page >= Math.ceil(rows.length / rowsPerPage) - 1
-                        : false
-                    }
-                    onClick={() => handleChangePage(page + 1)}
-                    sx={{ bgcolor: "background.surface" }}
-                  >
-                    <KeyboardArrowRightIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-            </td>
-          </tr>
-        </tfoot>
-      </Table>
-    </Sheet>
+                    <FormControl orientation="horizontal" size="sm">
+                      <FormLabel>Rows per page:</FormLabel>
+                      <Select
+                        onChange={handleChangeRowsPerPage}
+                        value={rowsPerPage}
+                      >
+                        <Option value={5}>5</Option>
+                        <Option value={10}>10</Option>
+                        <Option value={25}>25</Option>
+                      </Select>
+                    </FormControl>
+                    <Typography textAlign="center" sx={{ minWidth: 80 }}>
+                      {labelDisplayedRows({
+                        from: rows.length === 0 ? 0 : page * rowsPerPage + 1,
+                        to: getLabelDisplayedRowsTo(),
+                        count: rows.length === -1 ? -1 : rows.length,
+                      })}
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <IconButton
+                        size="sm"
+                        color="neutral"
+                        variant="outlined"
+                        disabled={page === 0}
+                        onClick={() => handleChangePage(page - 1)}
+                        sx={{ bgcolor: "background.surface" }}
+                      >
+                        <KeyboardArrowLeftIcon />
+                      </IconButton>
+                      <IconButton
+                        size="sm"
+                        color="neutral"
+                        variant="outlined"
+                        disabled={
+                          rows.length !== -1
+                            ? page >= Math.ceil(rows.length / rowsPerPage) - 1
+                            : false
+                        }
+                        onClick={() => handleChangePage(page + 1)}
+                        sx={{ bgcolor: "background.surface" }}
+                      >
+                        <KeyboardArrowRightIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </td>
+              </tr>
+            </tfoot>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Box>
+    // </Sheet>
   );
 }
