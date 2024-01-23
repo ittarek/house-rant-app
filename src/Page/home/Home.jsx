@@ -1,9 +1,12 @@
+import RoomCard from "./RoomCard";
 
 
 const Home = () => {
     return (
-        <div>
-          Home page  
+        <div className="flex gap-6">
+          <RoomCard /> 
+          <RoomCard /> 
+          <RoomCard /> 
         </div>
     );
 };

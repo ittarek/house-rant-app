@@ -36,9 +36,12 @@ const Header = () => {
      setAnchorElUser(null);
    };
     return (
-      <div>
+      <div className='bg-slate-300 py-2 mb-6'>
         <Link to="/">Home</Link>
-        <Link to="/house-owner">Owner Dashboard</Link>
+        <Link to="/house-owner" className='mx-3'>Owner Dashboard</Link>
+        <Link to='/house-renter'>House Renter Dashboard</Link>
+        <Link to="/signUp"> Sing Up</Link>
+        <Link to="/login"> Login</Link>
         {/* <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>

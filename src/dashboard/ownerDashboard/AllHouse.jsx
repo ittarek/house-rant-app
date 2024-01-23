@@ -133,35 +133,6 @@ function labelDisplayedRows({ from, to, count }) {
   return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
 }
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
-
 const headCells = [
   {
     id: "name",
@@ -209,13 +180,13 @@ const headCells = [
     id: "availabilityDate",
     // numeric: true,
     // disablePadding: false,
-    label: "Availability Date"
+    label: "Availability Date",
   },
   {
     id: " rentPerMonth",
     numeric: true,
     disablePadding: false,
-    label: "Rent Per Month"
+    label: "Rent Per Month",
   },
   {
     id: " phoneNumber",
@@ -231,7 +202,7 @@ const headCells = [
   },
   {
     id: " delete",
-   
+
     label: "Delete",
   },
   {
@@ -241,50 +212,8 @@ const headCells = [
   },
 ];
 
-function EnhancedTableHead(props) {
-  const {
-
-    onRequestSort,
-  } = props;
-  const createSortHandler = property => event => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <thead>
-      <tr>
-  
-        {headCells.map(headCell => {
-         
-          return (
-            <th
-              key={headCell.id}
-          
-            >
-        
-              <Link underline="none" color="neutral" fontWeight="lg">
-                {headCell.label}
-              </Link>
-            </th>
-          );
-        })}
-      </tr>
-    </thead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-
-export default function AllHouse() {
-          const [open, setOpen] = React.useState(false);
+const  AllHouse = () => {
+  const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -309,7 +238,7 @@ export default function AllHouse() {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <TableContainer >
+        <TableContainer>
           {" "}
           <Box
             sx={{
@@ -334,9 +263,21 @@ export default function AllHouse() {
             aria-labelledby="tableTitle"
             // size={dense ? "small" : "medium"}
           >
-            <EnhancedTableHead rowCount={rows.length} />
+            <thead>
+              <tr>
+                {headCells.map(headCell => {
+                  return (
+                    <th key={headCell.id}>
+                      <Link underline="none" color="neutral" fontWeight="lg">
+                        {headCell.label}
+                      </Link>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
             <tbody className="w-full">
-              {stableSort(rows, getComparator())
+              {rows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   return (
@@ -440,6 +381,7 @@ export default function AllHouse() {
         </TableContainer>
       </Paper>
     </Box>
-    // </Sheet>
+
   );
 }
+export default AllHouse;

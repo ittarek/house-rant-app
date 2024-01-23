@@ -1,42 +1,34 @@
-
-
-import {
-  Avatar,
-  Box,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Grid,
-  Input,
-  TextField,
-  TextareaAutosize,
-  Typography,
-} from "@mui/material";
-import Select from "@mui/joy/Select";
-import Option from "@mui/joy/Option";
+import { Box,TextField,} from "@mui/material";
 import Button from "@mui/joy/Button";
-
-import { LockOutlinedIcon } from "@mui/icons-material/LockOutlined";
-
-import CssBaseline from "@mui/material/CssBaseline";
-
 import MyModal from "../../ui/MyModal";
 import { Textarea } from "@mui/joy";
 
 const AddHouseModal = ({ open, setOpen }) => {
+  const cancel = () => {
+    setOpen(false);
+  };
+const handleSubmit = event => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
 
+    // {acknowledged: true, insertedId: '650c60412dd208edfe2bbd10'}
+console.log(data.get("name"));
 
+  
 
+    cancel();
+  };
 
   return (
-    <MyModal open={open} setOpen={setOpen} title="ADD Your House" >
+    <MyModal open={open} setOpen={setOpen} title="ADD Your House">
       <Box
         component="form"
+        onSubmit={handleSubmit}
         noValidate
         sx={{ mt: 1 }}
         className="grid lg:grid-cols-3    gap-6 grid-cols-2 mx-auto "
+
       >
-        {/* onSubmit={handleSubmit} */}
         {/* name */}
         <TextField
           margin="normal"
@@ -154,7 +146,7 @@ const AddHouseModal = ({ open, setOpen }) => {
           required
           fullWidth
           name="description"
-        //   label="Phone Number"
+          //   label="Phone Number"
           type="text"
           id="description"
           autoComplete="description"
@@ -169,7 +161,7 @@ const AddHouseModal = ({ open, setOpen }) => {
           <Button
             type="button"
             variant="soft"
-            // onClick={() => cancel()}
+            onClick={() => cancel()}
             sx={{ mr: 5 }}
           >
             Cancel
