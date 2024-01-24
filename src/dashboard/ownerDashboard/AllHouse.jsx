@@ -143,7 +143,9 @@ const  AllHouse = () => {
  React.useEffect(() => {
    const fetchData = async () => {
      try {
-       const response = await axios.get("http://localhost:5000/getHouseData");
+       const response = await axios.get(
+         "https://house-rant-server-9bfiaau4r-ittarek.vercel.app/getHouseData"
+       );
        setData(response.data);
      } catch (error) {
        console.error(error);

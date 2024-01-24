@@ -31,7 +31,7 @@ const EditHouse = ({ open, setOpen }) => {
     try {
       // Make an API request to your backend to register the user
       const response = await axios.put(
-        `http://localhost:5000/editHouse/${id}`,
+        `https://house-rant-server-9bfiaau4r-ittarek.vercel.app/editHouse/${id}`,
         houseData
       );
 
@@ -135,8 +135,8 @@ const EditHouse = ({ open, setOpen }) => {
           required
           fullWidth
           name="picture"
-          //   label="Picture"
-          type="file"
+            label="Picture Link"
+        //   type="file"
           id="picture"
           autoComplete="picture"
         />

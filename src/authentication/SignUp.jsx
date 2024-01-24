@@ -19,6 +19,8 @@ const Signup = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  console.log(error);
+  
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,7 +36,8 @@ const Signup = () => {
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async event => {
+const handleSubmit = async event => {
+  try {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
@@ -45,33 +48,40 @@ const Signup = () => {
       password: data.get("password"),
       role: data.get("role"),
     };
-    try {
-      // Make an API request to your backend to register the user
-      const response = await axios.post(
-        "http://localhost:5000/register",
-        savedUser
-      );
 
-      console.log("logged data", response);
 
-      if (response.data) {
-        //  localStorage.setItem("access_token", response.data?.accessToken);
-        setError("");
-        getUser();
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "User created successfully.",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        navigate(from, { replace: true });
-      }
-    } catch (error) {
-      console.error(error);
-      // Handle errors (e.g., display an error message)
+    const response = await axios.post(
+      "https://house-rant-server-9bfiaau4r-ittarek.vercel.app/register",
+      savedUser
+    );
+console.log(response.data);
+
+    if (response.data.accessToken) {
+      localStorage.setItem("access_token", response.data.accessToken);
+      setError("");
+      getUser();
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "User created successfully.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      navigate(from, { replace: true });
+    } else if (response.data?.error) {
+      setError(response.data?.error);
+      console.error("Registration error:", response.data?.error);
+    } else {
+      // Handle the case where the server response is not as expected
+      console.error("Unexpected server response:", response);
     }
-  };
+  } catch (error) {
+    console.error("Registration error:", error.response.data.error);
+     setError(error.response.data.error);
+    // Handle other errors (e.g., display an error message to the user)
+  }
+};
+
 
   return (
     <>
@@ -156,6 +166,7 @@ const Signup = () => {
                 </Select>
               </Grid>
             </Grid>
+            {error && <p className="text-red-500">{error}</p>}
             <Button
               type="submit"
               fullWidth

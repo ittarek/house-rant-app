@@ -22,6 +22,7 @@ import Swal from "sweetalert2";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/Authprovider";
 import toast from "react-hot-toast";
+import axios from "axios";
 // import { GoogleAuthProvider } from "firebase/auth";
 // import auth from "../../firebase/firebase.config";
 
@@ -38,38 +39,38 @@ const [error, setError] = useState()
  const [password, setPassword] = useState("");
 
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
- fetch("http://localhost:5000/login", {
-   method: "POST",
-   headers: {
-     "Content-Type": "application/json",
-   },
-   body: JSON.stringify({
-     email: data.get("email"),
-     password: data.get("password"),
-   }),
- })
-   .then(res => res.json())
-   .then(data => {
-     if (data?.accessToken) {
-       setError("");
-       localStorage.setItem("access_token", data?.accessToken);
-       toast.success("successfully loggedin");
-       getUser();
-       navigate(from, { replace: true });
-     } else if (data?.error) {
-       setError(data?.error);
-     }
-   });
-  
+const handleSubmit = async event => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
 
+  try {
+    const response = await axios.post(
+      "https://house-rant-server-9bfiaau4r-ittarek.vercel.app/login",
+      {
+        email: data.get("email"),
+        password: data.get("password"),
+      }
+    );
+
+    if (response.data?.accessToken) {
+      setError("");
+      localStorage.setItem("access_token", response.data?.accessToken);
+      toast.success("Successfully logged in");
+      getUser();
+      navigate(from, { replace: true });
+    } else if (response.data?.error) {
+      setError(response.data?.error);
+      console.error("Login error:", response.data?.error);
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    // Handle other errors (e.g., display an error message to the user)
   }
+};
+
 
   return (
     <Container component="main" maxWidth="xs">
-
       <Box
         sx={{
           marginTop: 8,
@@ -94,6 +95,8 @@ const [error, setError] = useState()
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
 
           <TextField
@@ -105,8 +108,10 @@ const [error, setError] = useState()
             label="Password"
             type="password"
             autoComplete="current-password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
           />
-
+          {error && <p className="text-red-500">{error}</p>}
           <Button
             type="submit"
             fullWidth

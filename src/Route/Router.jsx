@@ -6,6 +6,7 @@ import Renter from "../dashboard/RenterDashbord/Renter";
 import SignUp from "../authentication/SignUp";
 
 import Login from "./../authentication/Login";
+import PrivetRoute from "./PrivetRoute";
 
 export const router = createBrowserRouter([
   {
@@ -36,10 +37,14 @@ export const router = createBrowserRouter([
     path: "house-owner",
     element: <Owner />,
     children: [
-    
       {
         path: "/house-owner",
-        element: <Owner />,
+        element: (
+          <PrivetRoute>
+            {" "}
+            <Owner />
+          </PrivetRoute>
+        ),
       },
     ],
   },

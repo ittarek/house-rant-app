@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -13,6 +12,7 @@ import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 const ExpandMore = styled(props => {
   const { expand, ...other } = props;
@@ -25,16 +25,23 @@ const ExpandMore = styled(props => {
   }),
 }));
 
+
+
 const RoomCard = () => {
-  const [expanded, setExpanded] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  const [expanded, setExpanded] = useState(false);
+  const [data, setData] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
-
-  React.useEffect(() => {
+useEffect(() => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/getHouseData");
+        const response = await axios.get(
+          "https://house-rant-server-9bfiaau4r-ittarek.vercel.app/getHouseData"
+        );
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -45,7 +52,28 @@ const RoomCard = () => {
     fetchData();
   }, []); 
 
+const handleBooking = async (house) => {
+  console.log(house.name);
 
+  const response = await fetch(
+    " https://house-rant-server-9bfiaau4r-ittarek.vercel.app/api/bookings",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, phone }),
+    }
+  );
+
+  if (response.ok) {
+    const newBooking = await response.json();
+    setBookings([...bookings, newBooking]);
+  } else {
+    // Handle error cases
+    console.error("Booking failed:", response.statusText);
+  }
+};
 
   const handleExpandClick = houseId => {
     setExpanded(expanded === houseId ? null : houseId);
@@ -84,7 +112,7 @@ const RoomCard = () => {
             <Typography variant="body2">{house.rentPerMonth} Taka</Typography>
           </CardContent>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            <IconButton aria-label="add to favorites" onClick={()=> handleBooking(house)}>
               <FavoriteIcon />
             </IconButton>
 

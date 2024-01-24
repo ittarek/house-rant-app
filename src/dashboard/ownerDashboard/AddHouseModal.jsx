@@ -31,7 +31,7 @@ const houseData = {
 try {
     // Make an API request to your backend to register the user
     const response = await axios.post(
-      "http://localhost:5000/houseRant",
+      "https://house-rant-server-9bfiaau4r-ittarek.vercel.app/houseRant",
       houseData
     );
 
@@ -138,8 +138,8 @@ try {
           required
           fullWidth
           name="picture"
-          //   label="Picture"
-          type="file"
+            label="Picture Link"
+          // type="file"
           id="picture"
           autoComplete="picture"
         />
