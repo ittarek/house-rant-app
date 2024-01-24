@@ -1,70 +1,66 @@
-import { Box,TextField,} from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import Button from "@mui/joy/Button";
 import MyModal from "../../ui/MyModal";
 import { Textarea } from "@mui/joy";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const AddHouseModal = ({ open, setOpen }) => {
+const EditHouse = ({ open, setOpen }) => {
   const cancel = () => {
     setOpen(false);
   };
-const handleSubmit = async (event) => {
+  const handleSubmit = async (event,id) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     // {acknowledged: true, insertedId: '650c60412dd208edfe2bbd10'}
 
-const houseData = {
-  name: data.get("name"),
-  address: data.get("address"),
-  city: data.get("city"),
-  bedrooms: data.get("bedroom"),
-  bathrooms: data.get("bathRoom"),
-  roomSize: data.get("roomSize"),
-  picture: data.get("picture"),
-  availabilityDate: data.get("availabilityDate"),
-  rentPerMonth: data.get("rentPerMonth"),
-  phoneNumber: data.get("phoneNumber"),
-  description: data.get("description"),
-};
-try {
-    // Make an API request to your backend to register the user
-    const response = await axios.post(
-      "http://localhost:5000/houseRant",
-      houseData
-    );
+    const houseData = {
+      name: data.get("name"),
+      address: data.get("address"),
+      city: data.get("city"),
+      bedrooms: data.get("bedroom"),
+      bathrooms: data.get("bathRoom"),
+      roomSize: data.get("roomSize"),
+      picture: data.get("picture"),
+      availabilityDate: data.get("availabilityDate"),
+      rentPerMonth: data.get("rentPerMonth"),
+      phoneNumber: data.get("phoneNumber"),
+      description: data.get("description"),
+    };
+    try {
+      // Make an API request to your backend to register the user
+      const response = await axios.put(
+        `http://localhost:5000/editHouse/${id}`,
+        houseData
+      );
 
-    console.log(response.data);
-    if (response.data) {
-      // reset();
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "House Data Add successfully.",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-  
+    //   console.log(response.data);
+      if (response.data) {
+        // reset();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "House Data Edit successfully.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } catch (error) {
+      console.error(error);
     }
- 
-  } catch (error) {
-    console.error(error);
-   
-  }
 
     cancel();
   };
 
   return (
-    <MyModal open={open} setOpen={setOpen} title="ADD Your House">
+    <MyModal open={open} setOpen={setOpen} title="Edit Your House">
       <Box
         component="form"
         onSubmit={handleSubmit}
         noValidate
         sx={{ mt: 1 }}
         className="grid lg:grid-cols-3    gap-6 grid-cols-2 mx-auto "
-
       >
         {/* name */}
         <TextField
@@ -75,6 +71,7 @@ try {
           label="Name"
           name="name"
           autoComplete="name"
+          value={name}
           autoFocus
         />
         {/* address */}
@@ -212,4 +209,4 @@ try {
   );
 };
 
-export default AddHouseModal;
+export default EditHouse;

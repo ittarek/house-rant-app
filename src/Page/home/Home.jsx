@@ -3,10 +3,9 @@ import RoomCard from "./RoomCard";
 
 const Home = () => {
     return (
-        <div className="flex gap-6">
+        <div className="lg:flex  items-center mt-11">
           <RoomCard /> 
-          <RoomCard /> 
-          <RoomCard /> 
+    
         </div>
     );
 };

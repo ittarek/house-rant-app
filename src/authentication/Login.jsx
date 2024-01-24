@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // import { useDispatch, useSelector } from "react-redux";
 // import {
 //   googleLogin,
@@ -19,27 +19,53 @@ import { Link, useNavigate } from "react-router-dom";
 //   toggleLoading,
 // } from "../../redux/fetures/task/userSlice";
 import Swal from "sweetalert2";
+import { useContext, useState } from "react";
+import { AuthContext } from "../Provider/Authprovider";
+import toast from "react-hot-toast";
 // import { GoogleAuthProvider } from "firebase/auth";
 // import auth from "../../firebase/firebase.config";
 
 const Login = () => {
-  const navigate = useNavigate();
+
 //   const dispatch = useDispatch();
 //   const { isLoading } = useSelector(state => state.userSlice);
-  const from = location.state?.from?.pathname || "/";
+    const { getUser } = useContext(AuthContext);
+const [error, setError] = useState() 
+ const navigate = useNavigate();
+ const location = useLocation();
+ const from = location?.state?.from?.pathname || "/";
+ const [email, setEmail] = useState("");
+ const [password, setPassword] = useState("");
+
 
   const handleSubmit = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-
+ fetch("http://localhost:5000/login", {
+   method: "POST",
+   headers: {
+     "Content-Type": "application/json",
+   },
+   body: JSON.stringify({
+     email: data.get("email"),
+     password: data.get("password"),
+   }),
+ })
+   .then(res => res.json())
+   .then(data => {
+     if (data?.accessToken) {
+       setError("");
+       localStorage.setItem("access_token", data?.accessToken);
+       toast.success("successfully loggedin");
+       getUser();
+       navigate(from, { replace: true });
+     } else if (data?.error) {
+       setError(data?.error);
+     }
+   });
   
 
-  // login with google
-  const handleGoogleLogin = () => {
-    dispatch(googleLogin());
-
-    navigate(from, { replace: true });
-  };}
+  }
 
   return (
     <Container component="main" maxWidth="xs">

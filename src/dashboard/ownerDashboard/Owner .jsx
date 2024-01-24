@@ -91,13 +91,15 @@ const Owner = () => {
                   display: { xs: "block", md: "none" },
                 }}
               >
-                <MenuItem  onClick={handleCloseNavMenu}>
+                <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
                     {" "}
-                    <Button
-                      sx={{ my: 2, display: "block" }}
-                      onClick={() => setOpen(!open)}
-                    >
+                    <Button>
+                      {" "}
+                      <CreateNewFolderRoundedIcon />
+                      <Link to="/">Home</Link>
+                    </Button>
+                    <Button sx={{ my: 2 }} onClick={() => setOpen(!open)}>
                       <CreateNewFolderRoundedIcon /> Add New House
                     </Button>
                   </Typography>
@@ -121,10 +123,15 @@ const Owner = () => {
                 textDecoration: "none",
               }}
             >
-              LOGO
+              Owner
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               <AddHouseModal open={open} setOpen={setOpen} />
+              <Button sx={{ my: 2, color: "white", display: "block" }}>
+                {" "}
+           
+                <Link to="/">Home</Link>
+              </Button>{" "}
               <Button
                 sx={{ my: 2, color: "white", display: "block" }}
                 onClick={() => setOpen(!open)}

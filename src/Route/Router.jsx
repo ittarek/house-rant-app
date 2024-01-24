@@ -5,8 +5,7 @@ import Owner from "../dashboard/ownerDashboard/Owner ";
 import Renter from "../dashboard/RenterDashbord/Renter";
 import SignUp from "../authentication/SignUp";
 
-import Login from './../authentication/Login';
-
+import Login from "./../authentication/Login";
 
 export const router = createBrowserRouter([
   {
@@ -18,22 +17,30 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
-      {
-        path: "/house-owner",
-        element:<Owner />
-      },
+
       {
         path: "/house-renter",
-        element:<Renter />
+        element: <Renter />,
       },
       {
-path: "/signUp",
-element: <SignUp />
+        path: "/signUp",
+        element: <SignUp />,
       },
       {
-path: "/login",
-element: <Login />
-      }
+        path: "/login",
+        element: <Login />,
+      },
+    ],
+  },
+  {
+    path: "house-owner",
+    element: <Owner />,
+    children: [
+    
+      {
+        path: "/house-owner",
+        element: <Owner />,
+      },
     ],
   },
 ]);

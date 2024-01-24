@@ -1,82 +1,78 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-// import CssBaseline from '@mui/material/CssBaseline';
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-// import Link from '@mui/material/Link';
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
-import {
-  FormControl,
-  InputLabel,
-  Input,
-
-  Select,
-  MenuItem,
-} from "@mui/material";
-
+import { Select, MenuItem } from "@mui/material";
 import Swal from "sweetalert2";
+import axios from "axios";
+import { useContext, useState } from "react";
+import { AuthContext } from "../Provider/Authprovider";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-
+  const { getUser } = useContext(AuthContext);
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
- const [formData, setFormData] = React.useState({
-   fullName: "",
-   role: "House Owner",
-   phoneNumber: "",
-   email: "",
-   password: "",
- });
+  const from = location.state?.from?.pathname || "/house-owner";
+  const [formData, setFormData] = useState({
+    fullName: "",
+    role: "House Owner",
+    phoneNumber: "",
+    email: "",
+    password: "",
+  });
 
- const handleChange = e => {
-   setFormData({ ...formData, [e.target.name]: e.target.value });
- };
-
-  // signUp Function
-  const handleSubmit = event => {
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-  
+
     const savedUser = {
       fullName: data.get("fullName"),
       phoneNumber: data.get("phoneNumber"),
       email: data.get("email"),
       password: data.get("password"),
-      role: data.get("role")
+      role: data.get("role"),
     };
-    console.log(savedUser);
-    
-    fetch("https://task-management-serber.vercel.app/users", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(savedUser),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.insertedId) {
-          // reset();
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "User created successfully.",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          navigate(from, { replace: true });
-        }
-      });
+    try {
+      // Make an API request to your backend to register the user
+      const response = await axios.post(
+        "http://localhost:5000/register",
+        savedUser
+      );
+
+      console.log("logged data", response);
+
+      if (response.data) {
+        //  localStorage.setItem("access_token", response.data?.accessToken);
+        setError("");
+        getUser();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "User created successfully.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle errors (e.g., display an error message)
+    }
   };
+
   return (
     <>
       <Container component="main" maxWidth="xs">
@@ -149,9 +145,10 @@ const Signup = () => {
                 <Select
                   id="role"
                   name="role"
-                 autoComplete="role"
-         onChange={handleChange}
+                  autoComplete="role"
+                  onChange={handleChange}
                   required
+                  value={formData.role}
                   className="w-full"
                 >
                   <MenuItem value="House Owner">House Owner</MenuItem>

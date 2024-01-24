@@ -1,14 +1,11 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import Box from "@mui/joy/Box";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
-import Sheet from "@mui/joy/Sheet";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
 import Link from "@mui/joy/Link";
-import Tooltip from "@mui/joy/Tooltip";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,6 +16,9 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import AddHouseModal from "./AddHouseModal";
 import { TableContainer } from "@mui/material";
 import Paper from "@mui/material/Paper";
+import Swal from "sweetalert2";
+import axios from "axios";
+import EditHouse from "./EditHouse";
 
 function createData(
   name,
@@ -48,86 +48,7 @@ function createData(
   };
 }
 
-const rows = [
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    12,
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1558&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "1/1/2024",
-    5000,
-    +8815428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    11,
-    "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "   10 / 2 / 2024",
-    5000,
-    15428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    22,
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1558&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "10 / 2 / 2024",
-    5000,
-    15428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    41,
-    "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "10 / 2 / 2024",
-    5000,
-    15428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    32,
-    "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    " 10 / 2 / 2024",
-    5000,
-    15428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-  createData(
-    "Home",
-    "kumira, Ctg, Bd",
-    "Chittagong",
-    4,
-    4.3,
-    44,
-    "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "  10 / 2 / 2024",
-    5000,
-    15428165,
-    "sadkls aksdklas ksladjklas kasd "
-  ),
-];
+
 
 function labelDisplayedRows({ from, to, count }) {
   return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
@@ -216,6 +137,21 @@ const  AllHouse = () => {
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [data, setData] = React.useState([]);
+// console.log(data);
+
+ React.useEffect(() => {
+   const fetchData = async () => {
+     try {
+       const response = await axios.get("http://localhost:5000/getHouseData");
+       setData(response.data);
+     } catch (error) {
+       console.error(error);
+     }
+   };
+
+   fetchData();
+ }, []); 
 
   const handleChangePage = newPage => {
     setPage(newPage);
@@ -227,14 +163,48 @@ const  AllHouse = () => {
   };
 
   const getLabelDisplayedRowsTo = () => {
-    if (rows.length === -1) {
+    if (data.length === -1) {
       return (page + 1) * rowsPerPage;
     }
     return rowsPerPage === -1
-      ? rows.length
-      : Math.min(rows.length, (page + 1) * rowsPerPage);
+      ? data.length
+      : Math.min(data.length, (page + 1) * rowsPerPage);
   };
-
+// handle delete
+  const handleDelete = id => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "are you sure Delete This House ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, add !",
+    }).then(result => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/houseDelete/${id}`, {
+          method: "DELETE",
+        })
+          .then(res => res.json())
+          .then(data => {
+            // console.log(data);
+            if (data.deletedCount) {
+  
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Delete Successful",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          });
+      }
+    });
+  };
+const handleEdit = (id)=> {
+ setOpen(prevOpen => (prevOpen === id ? null : id));
+}
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
@@ -258,7 +228,7 @@ const  AllHouse = () => {
             </Typography>
             <FilterListIcon />
           </Box>
-          <Table
+        {  <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             // size={dense ? "small" : "medium"}
@@ -277,11 +247,11 @@ const  AllHouse = () => {
               </tr>
             </thead>
             <tbody className="w-full">
-              {rows
+              {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+                .map((row) => {
                   return (
-                    <tr className="w-full" key={index}>
+                    <tr className="w-full" key={row._id}>
                       <td>{row.name}</td>
                       <td>{row.address}</td>
                       <td>{row.city}</td>
@@ -295,20 +265,21 @@ const  AllHouse = () => {
                       <td>{row.rentPerMonth}</td>
                       <td>{row.phoneNumber}</td>
                       <td>{row.description}</td>
+              
                       <td>
                         {" "}
-                        <IconButton size="sm" color="danger" variant="solid">
+                        <IconButton size="sm" color="danger" variant="solid" onClick={()=> handleDelete(row._id)}>
                           <DeleteIcon />
                         </IconButton>
                       </td>
                       <td>
                         {" "}
-                        <AddHouseModal open={open} setOpen={setOpen} />
+                        {open === row._id && <EditHouse open={open} setOpen={setOpen} />}
                         <IconButton
                           size="sm"
                           color="success"
                           variant="solid"
-                          onClick={() => setOpen(!open)}
+                          onClick={() => handleEdit(row._id)}
                         >
                           <AppRegistrationIcon />
                         </IconButton>
@@ -342,9 +313,9 @@ const  AllHouse = () => {
                     </FormControl>
                     <Typography textAlign="center" sx={{ minWidth: 80 }}>
                       {labelDisplayedRows({
-                        from: rows.length === 0 ? 0 : page * rowsPerPage + 1,
+                        from: data.length === 0 ? 0 : page * rowsPerPage + 1,
                         to: getLabelDisplayedRowsTo(),
-                        count: rows.length === -1 ? -1 : rows.length,
+                        count: data.length === -1 ? -1 : data.length,
                       })}
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1 }}>
@@ -363,8 +334,8 @@ const  AllHouse = () => {
                         color="neutral"
                         variant="outlined"
                         disabled={
-                          rows.length !== -1
-                            ? page >= Math.ceil(rows.length / rowsPerPage) - 1
+                          data.length !== -1
+                            ? page >= Math.ceil(data.length / rowsPerPage) - 1
                             : false
                         }
                         onClick={() => handleChangePage(page + 1)}
@@ -377,7 +348,7 @@ const  AllHouse = () => {
                 </td>
               </tr>
             </tfoot>
-          </Table>
+          </Table>}
         </TableContainer>
       </Paper>
     </Box>
